@@ -93,16 +93,6 @@ namespace NuGetUtility
             Description = "This option allows to specify project name(s) to exclude from the analysis. This can be useful to exclude test projects from the analysis when supplying a solution file as input. Wildcard characters (*) are supported to specify ranges of ignored projects. The input can either be a file name containing a list of project names in json format or a plain string that is then used as a single entry. Note: ignored projects will not be evaluated in any form and it's transitive dependencies will NOT be evaluated.")]
         public string? ExcludedProjects { get; } = null;
 
-        [Option(LongName = "build-configuration",
-            ShortName = "c",
-            Description = "This option allows to specify the build configuration to use. Generally it is not needed to specify this parameter. However when dealing with ci builds that only build a specific configuration, this parameter may be needed.")]
-        public string? BuildConfiguration { get; } = null;
-
-        [Option(LongName = "platform",
-            ShortName = "p",
-            Description = "This option allows to specify the platform used to restore. Generally it is not needed to specify this parameter. However when dealing with ci builds that only build a specific configuration, this parameter may be needed.")]
-        public string? Platform { get; } = null;
-
         private static string GetVersion()
             => typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
 
@@ -117,7 +107,7 @@ namespace NuGetUtility
             IFileDownloader urlLicenseFileDownloader = GetFileDownloader(httpClient);
             IOutputFormatter output = GetOutputFormatter();
 
-            MsBuildAbstraction msBuild = new MsBuildAbstraction(BuildConfiguration, Platform);
+            MsBuildAbstraction msBuild = new MsBuildAbstraction();
             var projectCollector = new ProjectsCollector(msBuild);
             var projectReader = new ReferencedPackageReader(msBuild, new LockFileFactory(), GetPackagesConfigReader());
             var validator = new LicenseValidator.LicenseValidator(licenseMappings,

@@ -7,6 +7,8 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
     {
         public string FullPath { get; }
 
+        bool HasAssetsFile();
+
         string GetAssetsPath();
 
         string GetRestoreStyleTag();
@@ -15,6 +17,6 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
 
         int GetPackageReferenceCount();
 
-        IEnumerable<string> GetEvaluatedIncludes();
+        IEnumerable<string?> GetEvaluatedIncludes();
     }
 }

@@ -53,45 +53,23 @@ namespace NuGetUtility.Test.Extensions
             Assert.That(result, Is.False);
         }
 
-        [TestCase(null, null)]
-        [TestCase("", "")]
-        [TestCase(null, "PackageReference")]
-        [TestCase("", "PackageReference")]
-        [TestCase("PackageReference", null)]
-        [TestCase("PackageReference", "")]
-        [TestCase("PackageReference", "PackageReference")]
-        public void IsPackageReferenceProject_Should_ReturnTrue_If_ProjectIsPackageReferenceProject(
-            string nugetStyleTag,
-            string restoreStyleTag)
+        [TestCase(new string?[] { null }, false)]
+        [TestCase(new string?[] { null, null }, false)]
+        [TestCase(new string?[] { null, "not-packages.config" }, false)]
+        [TestCase(new string?[] { "not-packages.config" }, false)]
+        [TestCase(new string?[] { "not-packages.config", "other-not-packages.config" }, false)]
+        [TestCase(new string?[] { "packages.config" }, true)]
+        [TestCase(new string?[] { "packages.config", null }, true)]
+        [TestCase(new string?[] { null, "packages.config" }, true)]
+        [TestCase(new string?[] { "not-packages.config", "packages.config" }, true)]
+        [TestCase(new string?[] { null, "not-packages.config", "packages.config" }, true)]
+        public void HasPackagesConfigFile_Should_ReturnCorrectValue(string?[] evaluatedIncludes, bool expectedResult)
         {
-            _project.GetNuGetStyleTag().Returns(nugetStyleTag);
-            _project.GetRestoreStyleTag().Returns(restoreStyleTag);
-            _project.GetEvaluatedIncludes().Returns(new List<string> { "not-packages.config" });
+            _project.GetEvaluatedIncludes().Returns(evaluatedIncludes);
 
-            bool result = _project.IsPackageReferenceProject();
+            bool result = _project.HasPackagesConfigFile();
 
-            Assert.That(result, Is.True);
-        }
-
-        [TestCase("InvalidTag", "InvalidTag", "packages.config")]
-        [TestCase("InvalidTag", "PackageReference", "packages.config")]
-        [TestCase("InvalidTag", "InvalidTag", "not-packages.config")]
-        [TestCase("InvalidTag", "PackageReference", "not-packages.config")]
-        [TestCase("PackageReference", "InvalidTag", "packages.config")]
-        [TestCase("PackageReference", "PackageReference", "packages.config")]
-        [TestCase("PackageReference", "InvalidTag", "not-packages.config")]
-        public void IsPackageReferenceProject_Should_ReturnFalse_If_ProjectIsNotPackageReferenceProject(
-            string nugetStyleTag,
-            string restoreStyleTag,
-            string evaluatedInclude)
-        {
-            _project.GetNuGetStyleTag().Returns(nugetStyleTag);
-            _project.GetRestoreStyleTag().Returns(restoreStyleTag);
-            _project.GetEvaluatedIncludes().Returns(new List<string> { evaluatedInclude });
-
-            bool result = _project.IsPackageReferenceProject();
-
-            Assert.That(result, Is.False);
+            Assert.That(result, Is.EqualTo(expectedResult));
         }
 
         [TestCase()]

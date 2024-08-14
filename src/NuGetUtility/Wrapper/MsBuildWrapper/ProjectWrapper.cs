@@ -19,13 +19,19 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
             _project = project;
         }
 
+        public bool HasAssetsFile()
+        {
+            string assetsFile = _project.GetPropertyValue(ProjectAssetsFile);
+            return string.IsNullOrEmpty(assetsFile);
+        }
+
         public string GetAssetsPath()
         {
             string assetsFile = _project.GetPropertyValue(ProjectAssetsFile);
             if (!File.Exists(assetsFile))
             {
                 throw new MsBuildAbstractionException(
-                    $"Failed to get the project assets file for project {_project.FullPath} ({assetsFile})");
+                    $"Failed to get the project assets file for project {_project.FullPath} ({assetsFile})\nThis indicates that you most likely missed restoring nuget packages.");
             }
 
             return assetsFile;
@@ -46,7 +52,7 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
             return _project.GetItems(PackageReferenceTypeTag).Count;
         }
 
-        public IEnumerable<string> GetEvaluatedIncludes()
+        public IEnumerable<string?> GetEvaluatedIncludes()
         {
             return _project.AllEvaluatedItems.Select(projectItem => projectItem.EvaluatedInclude);
         }

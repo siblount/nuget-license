@@ -13,17 +13,12 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
     public class MsBuildAbstraction : IMsBuildAbstraction
     {
         private const string CollectPackageReferences = "CollectPackageReferences";
-        private readonly string? _buildConfiguration;
-        private readonly string? _platform;
-        private ProjectCollection? _projectCollection;
 
-        public ProjectCollection ProjectCollection => _projectCollection ??= InitializeProjectCollection(_buildConfiguration, _platform);
+        public ProjectCollection ProjectCollection => ProjectCollection.GlobalProjectCollection;
 
         public MsBuildAbstraction(string? buildConfiguration = null, string? platform = null)
         {
             RegisterMsBuildLocatorIfNeeded();
-            _buildConfiguration = buildConfiguration;
-            _platform = platform;
         }
 
         public IEnumerable<PackageReference> GetPackageReferencesFromProjectForFramework(IProject project,
@@ -33,7 +28,7 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
             {
                 { "TargetFramework", framework }
             };
-            var newProject = new ProjectInstance(project.FullPath, globalProperties, null);
+            var newProject = new ProjectInstance(project.FullPath, globalProperties, null, ProjectCollection);
             newProject.Build(new[] { CollectPackageReferences }, new List<ILogger>(), out IDictionary<string, TargetResult>? targetOutputs);
 
             return targetOutputs.First(e => e.Key.Equals(CollectPackageReferences))
@@ -71,20 +66,6 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
             {
                 MSBuildLocator.RegisterDefaults();
             }
-        }
-
-        private static ProjectCollection InitializeProjectCollection(string? buildConfiguration, string? platform)
-        {
-            ProjectCollection projectCollection = ProjectCollection.GlobalProjectCollection;
-            if (buildConfiguration != null)
-            {
-                projectCollection.SetGlobalProperty("Configuration", buildConfiguration);
-            }
-            if (platform != null)
-            {
-                projectCollection.SetGlobalProperty("Platform", platform);
-            }
-            return projectCollection;
         }
     }
 }

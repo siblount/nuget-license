@@ -33,12 +33,12 @@ namespace NuGetUtility.ReferencedPackagesReader
                 return Enumerable.Empty<PackageIdentity>();
             }
 
-            if (project.IsPackageReferenceProject())
+            if (project.HasPackagesConfigFile())
             {
-                return GetInstalledPackagesFromAssetsFile(includeTransitive, project);
+                return _packagesConfigReader.GetPackages(project);
             }
 
-            return _packagesConfigReader.GetPackages(project);
+            return GetInstalledPackagesFromAssetsFile(includeTransitive, project);
         }
 
         private IEnumerable<PackageIdentity> GetInstalledPackagesFromAssetsFile(bool includeTransitive,
