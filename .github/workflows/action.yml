@@ -42,6 +42,7 @@ jobs:
 
       - name: test
         run: dotnet test --configuration Release -f ${{ matrix.framework }} --no-restore
+
   test_windows:
     runs-on: windows-latest
     strategy:
@@ -79,6 +80,7 @@ jobs:
           testAssembly: "NuGetUtility.Test.dll"
           searchFolder: "tests/NuGetUtility.Test/bin/TestWindows/${{ matrix.framework }}/"
           runInParallel: true
+          resultLogsArtifactName: test-${{ matrix.framework }}-${{ github.run_number }}
 
   check_code_format:
     runs-on: ubuntu-latest

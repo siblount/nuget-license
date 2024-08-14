@@ -117,7 +117,7 @@ namespace NuGetUtility
             IFileDownloader urlLicenseFileDownloader = GetFileDownloader(httpClient);
             IOutputFormatter output = GetOutputFormatter();
 
-            MsBuildAbstraction msBuild = new MsBuildAbstraction(BuildConfiguration);
+            MsBuildAbstraction msBuild = new MsBuildAbstraction(BuildConfiguration, Platform);
             var projectCollector = new ProjectsCollector(msBuild);
             var projectReader = new ReferencedPackageReader(msBuild, new LockFileFactory(), GetPackagesConfigReader());
             var validator = new LicenseValidator.LicenseValidator(licenseMappings,
