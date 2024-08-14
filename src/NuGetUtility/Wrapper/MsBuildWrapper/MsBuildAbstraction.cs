@@ -3,7 +3,6 @@
 
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Exceptions;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Locator;
@@ -14,11 +13,17 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
     public class MsBuildAbstraction : IMsBuildAbstraction
     {
         private const string CollectPackageReferences = "CollectPackageReferences";
-        private readonly Dictionary<string, string> _globalProjectProperties = new();
+        private readonly string? _buildConfiguration;
+        private readonly string? _platform;
+        private ProjectCollection? _projectCollection;
 
-        public MsBuildAbstraction()
+        public ProjectCollection ProjectCollection => _projectCollection ??= InitializeProjectCollection(_buildConfiguration, _platform);
+
+        public MsBuildAbstraction(string? buildConfiguration = null, string? platform = null)
         {
             RegisterMsBuildLocatorIfNeeded();
+            _buildConfiguration = buildConfiguration;
+            _platform = platform;
         }
 
         public IEnumerable<PackageReference> GetPackageReferencesFromProjectForFramework(IProject project,
@@ -48,9 +53,7 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
             }
 #endif
 
-            ProjectRootElement rootElement = TryGetProjectRootElement(projectPath);
-
-            var project = new Project(rootElement, _globalProjectProperties, null);
+            Project project = ProjectCollection.LoadProject(projectPath);
 
             return new ProjectWrapper(project);
         }
@@ -70,18 +73,18 @@ namespace NuGetUtility.Wrapper.MsBuildWrapper
             }
         }
 
-        private static ProjectRootElement TryGetProjectRootElement(string projectPath)
+        private static ProjectCollection InitializeProjectCollection(string? buildConfiguration, string? platform)
         {
-            try
+            ProjectCollection projectCollection = ProjectCollection.GlobalProjectCollection;
+            if (buildConfiguration != null)
             {
-                return ProjectRootElement.Open(projectPath, ProjectCollection.GlobalProjectCollection)!;
+                projectCollection.SetGlobalProperty("Configuration", buildConfiguration);
             }
-            catch (InvalidProjectFileException e)
+            if (platform != null)
             {
-                throw new MsBuildAbstractionException($"Failed to open project: {projectPath}", e);
+                projectCollection.SetGlobalProperty("Platform", platform);
             }
+            return projectCollection;
         }
-
-        protected void AddGlobalProjectProperty(string name, string value) => _globalProjectProperties.Add(name, value);
     }
 }
