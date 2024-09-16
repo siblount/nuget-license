@@ -128,7 +128,7 @@ namespace NuGetUtility
                 IEnumerable<PackageIdentity>? installedPackages = null;
                 try
                 {
-                    installedPackages = projectReader.GetInstalledPackages(p, IncludeTransitive);
+                    installedPackages = projectReader.GetInstalledPackages(p, IncludeTransitive, TargetFramework);
                 }
                 catch (Exception e)
                 {
