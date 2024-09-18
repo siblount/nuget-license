@@ -57,10 +57,16 @@ namespace NuGetUtility.ReferencedPackagesReader
 
             if (targetFramework is not null)
             {
-                ILockFileTarget target = (assetsFile.Targets?.FirstOrDefault(t => t.TargetFramework.Equals(targetFramework))) ??
+                IEnumerable<ILockFileTarget> matchingTargets = assetsFile.Targets!.Where(t => t.TargetFramework.Equals(targetFramework));
+                if (!matchingTargets.Any())
+                {
                     throw new ReferencedPackageReaderException($"Target framework {targetFramework} not found.");
+                }
 
-                referencedLibraries.AddRange(GetReferencedLibrariesForTarget(includeTransitive, assetsFile, target));
+                foreach (ILockFileTarget target in matchingTargets)
+                {
+                    referencedLibraries.AddRange(GetReferencedLibrariesForTarget(includeTransitive, assetsFile, target));
+                }
             }
             else
             {
