@@ -1,4 +1,4 @@
-﻿// Licensed to the projects contributors.
+// Licensed to the projects contributors.
 // The license conditions are provided in the LICENSE file located in the project root
 
 using System.Collections.Immutable;
@@ -95,7 +95,7 @@ namespace NuGetUtility
 
         [Option(LongName = "target-framework",
             ShortName = "f",
-            Description = "This option allows to select a Target framework mockier (https://learn.microsoft.com/en-us/dotnet/standard/frameworks) for which to analyze dependencies.")]
+            Description = "This option allows to select a Target framework moniker (https://learn.microsoft.com/en-us/dotnet/standard/frameworks) for which to analyze dependencies.")]
         public string? TargetFramework { get; } = null;
 
         private static string GetVersion()
