@@ -27,7 +27,32 @@ namespace NuGetUtility.Wrapper.NuGetWrapper.Frameworks
         public bool Equals(string targetFramework)
         {
             var other = NuGetFramework.Parse(targetFramework);
-            return _framework.Equals(other);
+            if (_framework.DotNetFrameworkName != other.DotNetFrameworkName)
+            {
+                return false;
+            }
+
+            if (!other.HasPlatform)
+            {
+                return true;
+            }
+
+            if (!_framework.HasPlatform)
+            {
+                return false;
+            }
+
+            if (other.Platform != _framework.Platform)
+            {
+                return false;
+            }
+
+            if (other.PlatformVersion == new Version(0, 0, 0, 0))
+            {
+                return true;
+            }
+
+            return _framework.PlatformVersion == other.PlatformVersion;
         }
 
         public override int GetHashCode()
