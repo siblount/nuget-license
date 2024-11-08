@@ -9,14 +9,17 @@ public enum OutputColumnType
 {
     [Description("Package")]
     Package,
+    [Description("Package Id")]
     PackageId = Package, // Json name
     [Description("Version")]
     Version,
+    [Description("Package Version")]
     PackageVersion = Version, // Json name
     [Description("License Information Origin")]
     LicenseInformationOrigin,
     [Description("License Expression")]
     LicenseExpression,
+    [Description("License")]
     License = LicenseExpression,
     [Description("License Url")]
     LicenseUrl,
@@ -28,6 +31,7 @@ public enum OutputColumnType
     PackageProjectUrl,
     [Description("Error")]
     Error,
+    [Description("Validation Errors")]
     ValidationErrors = Error, // Json name, group "Error" and "ErrorContext"
     [Description("Error Context")]
     ErrorContext,
