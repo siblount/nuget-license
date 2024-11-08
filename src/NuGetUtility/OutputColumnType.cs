@@ -17,6 +17,7 @@ public enum OutputColumnType
     LicenseInformationOrigin,
     [Description("License Expression")]
     LicenseExpression,
+    License = LicenseExpression,
     [Description("License Url")]
     LicenseUrl,
     [Description("Copyright")]

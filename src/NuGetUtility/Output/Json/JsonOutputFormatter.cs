@@ -45,6 +45,7 @@ namespace NuGetUtility.Output.Json
             var props = resultType.GetProperties();
             Dictionary<OutputColumnType, PropertyInfo> validColumns = new();
 
+            // Parse LicenseValidationResult properties to store the non-ignored columns
             foreach (var field in props)
             {
                 if (!Enum.TryParse(field.Name, out OutputColumnType colType))
@@ -60,9 +61,10 @@ namespace NuGetUtility.Output.Json
                 validColumns.Add(colType, field); 
             }
 
+            // Create the new array of dictionaries with only the non-ignored columns
             var dictionaries = results.Select(result =>
             {
-                var dictionary = new Dictionary<OutputColumnType, object>();
+                var dictionary = new Dictionary<string, object>();
 
 
                 foreach (var field in validColumns)
@@ -75,7 +77,7 @@ namespace NuGetUtility.Output.Json
                         case IList { Count: 0 }:
                             continue;
                         default:
-                            dictionary.Add(field.Key, value);
+                            dictionary.Add(field.Value.Name, value);
                             break;
                     }
                 }
