@@ -7,8 +7,18 @@ using NuGetUtility.Test.Extensions;
 
 namespace NuGetUtility.Test.Output.Table
 {
-    [TestFixture(false, true, true, true, true, new[] { nameof(OutputColumnType.LicenseInformationOrigin) })]
-    [TestFixture(false, true, true, true, true, new[] { nameof(OutputColumnType.LicenseInformationOrigin), nameof(OutputColumnType.LicenseExpression) })]
+    [TestFixture(false, true, true, true, true, new[] { nameof(OutputColumnType.LicenseInformationOrigin), nameof(OutputColumnType.License) })]
+    [TestFixture(false, true, true, true, true, new[] {
+        nameof(OutputColumnType.Authors),
+        nameof(OutputColumnType.Copyright),
+        nameof(OutputColumnType.LicenseUrl),
+        nameof(OutputColumnType.PackageVersion),
+        nameof(OutputColumnType.ValidationErrors),
+        nameof(OutputColumnType.ErrorContext),
+        nameof(OutputColumnType.PackageProjectUrl),
+        nameof(OutputColumnType.License),
+        nameof(OutputColumnType.LicenseInformationOrigin)
+    })]
     public class TableOutputFormatterIgnoringColumnsTest : TestBase
     {
         private readonly bool _omitValidLicensesOnError;
@@ -37,22 +47,20 @@ namespace NuGetUtility.Test.Output.Table
                 OutputColumnType.Authors,
                 OutputColumnType.Copyright,
                 OutputColumnType.LicenseUrl,
-                OutputColumnType.Package,
-                OutputColumnType.Version,
-                OutputColumnType.Error,
+                OutputColumnType.PackageId,
+                OutputColumnType.PackageVersion,
+                OutputColumnType.ValidationErrors,
                 OutputColumnType.ErrorContext,
                 OutputColumnType.PackageProjectUrl,
-                OutputColumnType.LicenseExpression,
+                OutputColumnType.License,
                 OutputColumnType.LicenseInformationOrigin
             });
 
             using var stream = new MemoryStream();
             var validated = ValidatedLicenseFaker.GenerateForever().Take(validatedLicenseCount).ToList();
 
-            Assert.ThrowsAsync(typeof(InvalidOperationException), async Task () =>
-            {
-                await formatter.Write(stream, validated);
-            });
+            Assert.ThrowsAsync(typeof(InvalidOperationException), async Task () => await formatter.Write(stream, validated));
+
             return Task.CompletedTask;
         }
     }

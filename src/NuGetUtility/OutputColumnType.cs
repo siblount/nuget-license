@@ -8,19 +8,13 @@ namespace NuGetUtility;
 public enum OutputColumnType
 {
     [Description("Package")]
-    Package,
-    [Description("Package Id")]
-    PackageId = Package, // Json name
+    PackageId,
     [Description("Version")]
-    Version,
-    [Description("Package Version")]
-    PackageVersion = Version, // Json name
+    PackageVersion,
     [Description("License Information Origin")]
     LicenseInformationOrigin,
     [Description("License Expression")]
-    LicenseExpression,
-    [Description("License")]
-    License = LicenseExpression,
+    License, // License Expression 
     [Description("License Url")]
     LicenseUrl,
     [Description("Copyright")]
@@ -30,9 +24,7 @@ public enum OutputColumnType
     [Description("Package Project Url")]
     PackageProjectUrl,
     [Description("Error")]
-    Error,
-    [Description("Validation Errors")]
-    ValidationErrors = Error, // Json name, group "Error" and "ErrorContext"
+    ValidationErrors,
     [Description("Error Context")]
     ErrorContext,
 }

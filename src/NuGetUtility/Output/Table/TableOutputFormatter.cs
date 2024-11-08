@@ -21,13 +21,13 @@ namespace NuGetUtility.Output.Table
 
         public async Task Write(Stream stream, IList<LicenseValidationResult> results)
         {
-            var errorColumnDefinition = new ColumnDefinition(OutputColumnType.Error, license => license.ValidationErrors.Select(e => e.Error), license => license.ValidationErrors.Any());
+            var errorColumnDefinition = new ColumnDefinition(OutputColumnType.ValidationErrors, license => license.ValidationErrors.Select(e => e.Error), license => license.ValidationErrors.Any());
             ColumnDefinition[] columnDefinitions = new[]
             {
-                new ColumnDefinition(OutputColumnType.Package, license => license.PackageId, license => true, true),
-                new ColumnDefinition(OutputColumnType.Version, license => license.PackageVersion, license => true, true),
+                new ColumnDefinition(OutputColumnType.PackageId, license => license.PackageId, license => true, true),
+                new ColumnDefinition(OutputColumnType.PackageVersion, license => license.PackageVersion, license => true, true),
                 new ColumnDefinition(OutputColumnType.LicenseInformationOrigin, license => license.LicenseInformationOrigin, license => true, true),
-                new ColumnDefinition(OutputColumnType.LicenseExpression, license => license.License, license => license.License != null),
+                new ColumnDefinition(OutputColumnType.License, license => license.License, license => license.License != null),
                 new ColumnDefinition(OutputColumnType.LicenseUrl, license => license.LicenseUrl, license => license.LicenseUrl != null),
                 new ColumnDefinition(OutputColumnType.Copyright, license => license.Copyright, license => license.Copyright != null),
                 new ColumnDefinition(OutputColumnType.Authors, license => license.Authors, license => license.Authors != null),
