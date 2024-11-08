@@ -292,19 +292,27 @@ namespace NuGetUtility
             throw new FileNotFoundException("Please provide an input file");
         }
 
-        private string[] GetIgnoredColumns()
+        private OutputColumnType[] GetIgnoredColumns()
         {
             if (IgnoredColumns == null)
             {
-                return Array.Empty<string>();
+                return Array.Empty<OutputColumnType>();
             }
 
             if (File.Exists(IgnoredColumns))
             {
-                return JsonSerializer.Deserialize<string[]>(File.ReadAllText(IgnoredColumns))!;
+                string[] columnNames = JsonSerializer.Deserialize<string[]>(File.ReadAllText(IgnoredColumns))!;
+                try
+                {
+                    return columnNames.Select(columnName => (OutputColumnType)Enum.Parse(typeof(OutputColumnType), columnName, true)).ToArray();
+                }
+                catch(ArgumentException e)
+                {
+                    throw new ArgumentOutOfRangeException($"One of the column names ({e.ParamName}) isn't valid");
+                }
             }
 
-            return new[] { IgnoredColumns };
+            return new[] { (OutputColumnType)Enum.Parse(typeof(OutputColumnType), IgnoredColumns, true) };
         }
     }
 }
