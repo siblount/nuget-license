@@ -185,8 +185,8 @@ namespace NuGetUtility
         {
             return OutputType switch
             {
-                OutputType.Json => new JsonOutputFormatter(false, ReturnErrorsOnly, !IncludeIgnoredPackages),
-                OutputType.JsonPretty => new JsonOutputFormatter(true, ReturnErrorsOnly, !IncludeIgnoredPackages),
+                OutputType.Json => new JsonOutputFormatter(false, ReturnErrorsOnly, !IncludeIgnoredPackages, GetIgnoredColumns()),
+                OutputType.JsonPretty => new JsonOutputFormatter(true, ReturnErrorsOnly, !IncludeIgnoredPackages, GetIgnoredColumns()),
                 OutputType.Table => new TableOutputFormatter(ReturnErrorsOnly, !IncludeIgnoredPackages, GetIgnoredColumns()),
                 _ => throw new ArgumentOutOfRangeException($"{OutputType} not supported")
             };
