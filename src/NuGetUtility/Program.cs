@@ -8,7 +8,6 @@ using System.Text.Json;
 using McMaster.Extensions.CommandLineUtils;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
-using NuGetUtility.Extension;
 using NuGetUtility.Extensions;
 using NuGetUtility.LicenseValidator;
 using NuGetUtility.Output;
@@ -31,13 +30,13 @@ namespace NuGetUtility
     {
         [Option(ShortName = "i",
             LongName = "input",
-            Description = "The project (or solution) file for which to analyze dependency licenses")]
+            Description = "The project (or solution) file for which to analyze dependency licenses. Note that this option takes precendence over (-ji|--json-input).")]
         public string? InputFile { get; } = null;
 
         [Option(ShortName = "ji",
             LongName = "json-input",
             Description =
-                "File in json format that contains an array of all files to be evaluated. The Files can either point to a project or a solution.")]
+                "File in json format that contains an array of all files to be evaluated. The Files can either point to a project or a solution. Note that the option (-i|--input) takes precendence over this option.")]
         public string? InputJsonFile { get; } = null;
 
         [Option(LongName = "include-transitive",
@@ -100,13 +99,20 @@ namespace NuGetUtility
 
         [Option(LongName = "ignored-columns-from-output",
             ShortName = "ignored-columns",
-            Description = "This option allows to specify column name(s) to exclude from the output")]
-        public string? IgnoredColumns { get; } = null;
+            Description = $"This option allows to specify column name(s) to exclude from the output. Multiple definitions are allowed. Note that the option (-jignored-columns|--json-ignored-columns-from-output) takes precendence over this option.")]
+        public LicenseValidationResultProperties[] IgnoredColumns { get; } = Array.Empty<LicenseValidationResultProperties>();
+
+        [Option(LongName = "json-ignored-columns-from-output",
+            ShortName = "jignored-columns",
+            Description = $"This option allows to specify column name(s) to exclude from the output. Note that this option takes precendence over (-ignored-columns|--ignored-columns-from-output).")]
+        public string? JsonIgnoredColumns { get; } = null;
 
         private static string GetVersion()
             => typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
 
+#pragma warning disable S1144 // Unused private types or members should be removed
         private async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
+#pragma warning restore S1144 // Unused private types or members should be removed
         {
             using var httpClient = new HttpClient();
             string[] inputFiles = GetInputFiles();
@@ -162,7 +168,7 @@ namespace NuGetUtility
 #if NETFRAMEWORK
             return new WindowsPackagesConfigReader();
 #else
-           return OperatingSystem.IsWindows() ? new WindowsPackagesConfigReader() : new FailingPackagesConfigReader();
+            return OperatingSystem.IsWindows() ? new WindowsPackagesConfigReader() : new FailingPackagesConfigReader();
 #endif
         }
 
@@ -292,27 +298,14 @@ namespace NuGetUtility
             throw new FileNotFoundException("Please provide an input file");
         }
 
-        private OutputColumnType[] GetIgnoredColumns()
+        private LicenseValidationResultProperties[] GetIgnoredColumns()
         {
-            if (IgnoredColumns == null)
+            if (JsonIgnoredColumns != null)
             {
-                return Array.Empty<OutputColumnType>();
+                return JsonSerializer.Deserialize<LicenseValidationResultProperties[]>(File.ReadAllText(JsonIgnoredColumns))!;
             }
 
-            if (File.Exists(IgnoredColumns))
-            {
-                string[] columnNames = JsonSerializer.Deserialize<string[]>(File.ReadAllText(IgnoredColumns))!;
-                try
-                {
-                    return columnNames.Select(columnName => (OutputColumnType)Enum.Parse(typeof(OutputColumnType), columnName, true)).ToArray();
-                }
-                catch(ArgumentException e)
-                {
-                    throw new ArgumentOutOfRangeException($"One of the column names ({e.ParamName}) isn't valid");
-                }
-            }
-
-            return new[] { (OutputColumnType)Enum.Parse(typeof(OutputColumnType), IgnoredColumns, true) };
+            return IgnoredColumns;
         }
     }
 }
