@@ -39,8 +39,8 @@ Usage: nuget-license [options]
 | `-include-ignored\|--include-ignored-packages` | If this option is set, the packages that are ignored from validation are still included in the output. |
 | `-exclude-projects\|--exclude-projects-matching <EXCLUDED_PROJECTS>` | This option allows to specify project name(s) to exclude from the analysis. This can be useful to exclude test projects from the analysis when supplying a solution file as input. Wildcard characters (*) are supported to specify ranges of ignored projects. The input can either be a file name containing a list of project names in json format or a plain string that is then used as a single entry. |
 | `-f\|--target-framework <TARGET_FRAMEWORK>` | This option allows to select a Target framework moniker (https://learn.microsoft.com/en-us/dotnet/standard/frameworks) for which to analyze dependencies. |
-| `-ignored-columns\|--ignored-columns-from-output <IGNORED_COLUMNS>` | This option allows to specify information to exclude from the output. Multiple definitions are allowed. Note that the option (`-jignored-columns\|--json-ignored-columns-from-output`) takes precendence over this option. |
-| `-jignored-columns\|--json-ignored-columns-from-output <JSON_IGNORED_COLUMNS>` | This option allows to specify column information to exclude from the output. Note that this option takes precendence over (`-ignored-columns\|--ignored-columns-from-output`). |
+| `-ignored-values\|--ignored-values-from-output <IGNORED_VALUES>` | This option allows to specify information to exclude from the output. Multiple definitions are allowed. Note that the option (`-jignored-values\|--json-ignored-values-from-output`) takes precendence over this option. |
+| `-jignored-values\|--json-ignored-values-from-output <JSON_IGNORED_VALUES>` | This option allows to specify column information to exclude from the output. Note that this option takes precendence over (`-ignored-values\|--ignored-values-from-output`). |
 | `-?\|-h\|--help` | Show help information. |
 
 ## Example tool commands

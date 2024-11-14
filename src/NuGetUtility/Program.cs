@@ -97,15 +97,15 @@ namespace NuGetUtility
             Description = "This option allows to select a Target framework moniker (https://learn.microsoft.com/en-us/dotnet/standard/frameworks) for which to analyze dependencies.")]
         public string? TargetFramework { get; } = null;
 
-        [Option(LongName = "ignored-columns-from-output",
-            ShortName = "ignored-columns",
-            Description = $"This option allows to specify column name(s) to exclude from the output. Multiple definitions are allowed. Note that the option (-jignored-columns|--json-ignored-columns-from-output) takes precendence over this option.")]
-        public LicenseValidationResultProperties[] IgnoredColumns { get; } = Array.Empty<LicenseValidationResultProperties>();
+        [Option(LongName = "ignored-values-from-output",
+            ShortName = "ignored-values",
+            Description = $"This option allows to specify column name(s) to exclude from the output. Multiple definitions are allowed. Note that the option (-jignored-values|--json-ignored-values-from-output) takes precendence over this option.")]
+        public LicenseValidationResultProperties[] IgnoredValues { get; } = Array.Empty<LicenseValidationResultProperties>();
 
-        [Option(LongName = "json-ignored-columns-from-output",
-            ShortName = "jignored-columns",
-            Description = $"This option allows to specify column name(s) to exclude from the output. Note that this option takes precendence over (-ignored-columns|--ignored-columns-from-output).")]
-        public string? JsonIgnoredColumns { get; } = null;
+        [Option(LongName = "json-ignored-valuess-from-output",
+            ShortName = "jignored-values",
+            Description = $"This option allows to specify column name(s) to exclude from the output. Note that this option takes precendence over (-ignored-values|--ignored-values-from-output).")]
+        public string? JsonIgnoredValues { get; } = null;
 
         private static string GetVersion()
             => typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
@@ -189,11 +189,12 @@ namespace NuGetUtility
 
         private IOutputFormatter GetOutputFormatter()
         {
+            LicenseValidationResultProperties[] ignoredValues = GetIgnoredValues();
             return OutputType switch
             {
-                OutputType.Json => new JsonOutputFormatter(false, ReturnErrorsOnly, !IncludeIgnoredPackages, GetIgnoredColumns()),
-                OutputType.JsonPretty => new JsonOutputFormatter(true, ReturnErrorsOnly, !IncludeIgnoredPackages, GetIgnoredColumns()),
-                OutputType.Table => new TableOutputFormatter(ReturnErrorsOnly, !IncludeIgnoredPackages, GetIgnoredColumns()),
+                OutputType.Json => new JsonOutputFormatter(false, ReturnErrorsOnly, !IncludeIgnoredPackages, ignoredValues),
+                OutputType.JsonPretty => new JsonOutputFormatter(true, ReturnErrorsOnly, !IncludeIgnoredPackages, ignoredValues),
+                OutputType.Table => new TableOutputFormatter(ReturnErrorsOnly, !IncludeIgnoredPackages, ignoredValues),
                 _ => throw new ArgumentOutOfRangeException($"{OutputType} not supported")
             };
         }
@@ -298,14 +299,14 @@ namespace NuGetUtility
             throw new FileNotFoundException("Please provide an input file");
         }
 
-        private LicenseValidationResultProperties[] GetIgnoredColumns()
+        private LicenseValidationResultProperties[] GetIgnoredValues()
         {
-            if (JsonIgnoredColumns != null)
+            if (JsonIgnoredValues != null)
             {
-                return JsonSerializer.Deserialize<LicenseValidationResultProperties[]>(File.ReadAllText(JsonIgnoredColumns))!;
+                return JsonSerializer.Deserialize<LicenseValidationResultProperties[]>(File.ReadAllText(JsonIgnoredValues))!;
             }
 
-            return IgnoredColumns;
+            return IgnoredValues;
         }
     }
 }
