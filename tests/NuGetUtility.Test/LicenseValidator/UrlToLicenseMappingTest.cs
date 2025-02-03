@@ -51,7 +51,7 @@ namespace NuGetUtility.Test.LicenseValidator
             public DisposableWebDriver()
             {
                 var options = new ChromeOptions();
-                options.AddArguments("--no-sandbox", "--disable-dev-shm-usage", "--headless");
+                options.AddArguments("--disable-dev-shm-usage", "--headless");
                 _driver = new ChromeDriver(options);
             }
 
