@@ -25,6 +25,7 @@ namespace NuGetUtility.Test.PackageInformationReader
             _customPackageInformation = Enumerable.Empty<CustomPackageInformation>().ToList();
             _fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
             _fixture.Customizations.Add(new NuGetVersionBuilder());
+            _fixture.Customizations.Add(new CustomPackageInformationBuilderWithOptionalFileds());
             _repositories = Array.Empty<ISourceRepository>();
             _globalPackagesFolderUtility = Substitute.For<IGlobalPackagesFolderUtility>();
 
@@ -93,15 +94,15 @@ namespace NuGetUtility.Test.PackageInformationReader
             LicenseType licenseType)
         {
             Assert.That(packages, Is.EquivalentTo(result.Select(s => new CustomPackageInformation(s.PackageInfo.Identity.Id,
-                                                                s.PackageInfo.Identity.Version,
-                                                                s.PackageInfo.LicenseMetadata!.License,
-                                                                s.PackageInfo.LicenseUrl,
-                                                                s.PackageInfo.Copyright,
-                                                                s.PackageInfo.Authors,
-                                                                s.PackageInfo.Title,
-                                                                s.PackageInfo.ProjectUrl,
-                                                                s.PackageInfo.Summary,
-                                                                s.PackageInfo.Description))));
+                                                                                                  s.PackageInfo.Identity.Version,
+                                                                                                  s.PackageInfo.LicenseMetadata!.License,
+                                                                                                  s.PackageInfo.Copyright,
+                                                                                                  s.PackageInfo.Authors,
+                                                                                                  s.PackageInfo.Title,
+                                                                                                  s.PackageInfo.ProjectUrl,
+                                                                                                  s.PackageInfo.Summary,
+                                                                                                  s.PackageInfo.Description,
+                                                                                                  s.PackageInfo.LicenseUrl))));
             foreach (ReferencedPackageWithContext r in result)
             {
                 Assert.That(r.Context, Is.EqualTo(project));
@@ -125,6 +126,7 @@ namespace NuGetUtility.Test.PackageInformationReader
                 mockedInfo.ProjectUrl.Returns(info.ProjectUrl);
                 mockedInfo.Summary.Returns(info.Summary);
                 mockedInfo.Description.Returns(info.Description);
+                mockedInfo.LicenseUrl.Returns(info.LicenseUrl);
                 mockedInfo.LicenseMetadata.Returns(new LicenseMetadata(LicenseType.Expression, info.License));
                 mockedInfo.LicenseUrl.Returns(info.LicenseUrl);
                 _globalPackagesFolderUtility.GetPackage(identity).Returns(mockedInfo);
@@ -156,6 +158,7 @@ namespace NuGetUtility.Test.PackageInformationReader
                 resultingInfo.Summary.Returns(package.Summary);
                 resultingInfo.Description.Returns(package.Description);
                 resultingInfo.ProjectUrl.Returns(package.ProjectUrl);
+                resultingInfo.LicenseUrl.Returns(package.LicenseUrl);
 
                 metadataReturningProperInformation.TryGetMetadataAsync(new PackageIdentity(package.Id, package.Version), Arg.Any<CancellationToken>()).
                     Returns(_ => Task.FromResult<IPackageMetadata?>(resultingInfo));
