@@ -16,9 +16,9 @@ namespace NuGetUtility.Test.ProjectFiltering
         [Test]
         public void FilterProjects_ExcludesSharedProjects_WhenIncludeSharedProjectsIsFalse()
         {
-            var projects = new[] { "one.csproj", "two.shproj", "three.csproj", "four.SHPROJ" };
+            string[] projects = new[] { "one.csproj", "two.shproj", "three.csproj", "four.SHPROJ" };
 
-            var result = _filterer.FilterProjects(projects, false).ToArray();
+            string[] result = _filterer.FilterProjects(projects, false).ToArray();
 
             Assert.That(result.Count, Is.EqualTo(2));
             Assert.That(result, Does.Contain("one.csproj"));
@@ -30,9 +30,9 @@ namespace NuGetUtility.Test.ProjectFiltering
         [Test]
         public void FilterProjects_IncludesAllProjects_WhenIncludeSharedProjectsIsTrue()
         {
-            var projects = new[] { "one.csproj", "two.shproj", "three.csproj", "four.SHPROJ" };
+            string[] projects = new[] { "one.csproj", "two.shproj", "three.csproj", "four.SHPROJ" };
 
-            var result = _filterer.FilterProjects(projects, true).ToArray();
+            string[] result = _filterer.FilterProjects(projects, true).ToArray();
 
             Assert.That(result.Count, Is.EqualTo(3));
             Assert.That(result, Does.Contain("one.csproj"));
