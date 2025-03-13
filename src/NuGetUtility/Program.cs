@@ -312,7 +312,7 @@ namespace NuGetUtility
             var result = new List<ProjectWithReferencedPackages>();
             exceptions = encounteredExceptions;
 
-            IEnumerable<string> filteredProjects = ProjectFilterer.Instance.FilterProjects(projects, IncludeSharedProjects);
+            IEnumerable<string> filteredProjects = new ProjectFilterer().FilterProjects(projects, IncludeSharedProjects);
 
             foreach (string project in filteredProjects)
             {

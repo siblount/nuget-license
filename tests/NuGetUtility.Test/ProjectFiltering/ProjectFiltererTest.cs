@@ -34,7 +34,7 @@ namespace NuGetUtility.Test.ProjectFiltering
 
             string[] result = _filterer.FilterProjects(projects, true).ToArray();
 
-            Assert.That(result.Count, Is.EqualTo(3));
+            Assert.That(result.Count, Is.EqualTo(4));
             Assert.That(result, Does.Contain("one.csproj"));
             Assert.That(result, Does.Contain("two.shproj"));
             Assert.That(result, Does.Contain("three.csproj"));
