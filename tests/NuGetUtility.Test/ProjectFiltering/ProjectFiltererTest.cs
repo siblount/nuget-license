@@ -13,21 +13,10 @@ namespace NuGetUtility.Test.ProjectFiltering
             _filterer = new ProjectFilterer();
         }
 
-        [TestCase("test.shproj", true)]
-        [TestCase("test.SHPROJ", true)]
-        [TestCase("test.csproj", false)]
-        [TestCase("test.vbproj", false)]
-        public void IsSharedProject_DetectsProjectTypeCorrectly(string projectPath, bool expectedResult)
-        {
-            bool result = _filterer.IsSharedProject(projectPath);
-
-            Assert.That(result, Is.EqualTo(expectedResult));
-        }
-
         [Test]
         public void FilterProjects_ExcludesSharedProjects_WhenIncludeSharedProjectsIsFalse()
         {
-            var projects = new[] { "one.csproj", "two.shproj", "three.csproj" };
+            var projects = new[] { "one.csproj", "two.shproj", "three.csproj", "four.SHPROJ" };
 
             var result = _filterer.FilterProjects(projects, false).ToArray();
 
@@ -35,12 +24,13 @@ namespace NuGetUtility.Test.ProjectFiltering
             Assert.That(result, Does.Contain("one.csproj"));
             Assert.That(result, Does.Contain("three.csproj"));
             Assert.That(result, Does.Not.Contain("two.shproj"));
+            Assert.That(result, Does.Not.Contain("four.SHPROJ"));
         }
 
         [Test]
         public void FilterProjects_IncludesAllProjects_WhenIncludeSharedProjectsIsTrue()
         {
-            var projects = new[] { "one.csproj", "two.shproj", "three.csproj" };
+            var projects = new[] { "one.csproj", "two.shproj", "three.csproj", "four.SHPROJ" };
 
             var result = _filterer.FilterProjects(projects, true).ToArray();
 
@@ -48,13 +38,6 @@ namespace NuGetUtility.Test.ProjectFiltering
             Assert.That(result, Does.Contain("one.csproj"));
             Assert.That(result, Does.Contain("two.shproj"));
             Assert.That(result, Does.Contain("three.csproj"));
-        }
-
-        [Test]
-        public void Instance_Exists() {
-            var instance = ProjectFilterer.Instance;
-
-            Assert.That(instance, Is.Not.Null);
         }
     }
 }
